@@ -6,13 +6,12 @@
 <title>Smart Crime Tracker — Presentation Demo</title>
 <style>
   :root{
-    --bg1:#041a1a; --bg2:#002b20; --accent:#00e686; --muted:#9fdad0;
-    --card:rgba(6,20,18,0.82);
-    --glass: rgba(255,255,255,0.03);
+    --bg1:#031218; --bg2:#00372e; --accent:#00e486; --accent2:#38e8ff;
+    --muted:#9fdad0; --card:rgba(6,18,16,0.86); --glass:rgba(255,255,255,0.03);
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, Arial;color:#e8fff7;background:linear-gradient(180deg,var(--bg1),var(--bg2));-webkit-font-smoothing:antialiased}
-  /* animated stars (pure CSS) */
+  html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, Arial;color:#e9fff6;background:linear-gradient(180deg,var(--bg1),var(--bg2));-webkit-font-smoothing:antialiased}
+  /* animated starfield */
   .stars{position:fixed;inset:0;z-index:0;pointer-events:none;background:
     radial-gradient(1px 1px at 5% 10%, #fff 60%, transparent 61%),
     radial-gradient(1px 1px at 20% 30%, #fff 60%, transparent 61%),
@@ -20,79 +19,72 @@
     radial-gradient(1px 1px at 50% 20%, #fff 60%, transparent 61%),
     radial-gradient(1px 1px at 65% 45%, #fff 60%, transparent 61%),
     radial-gradient(1px 1px at 80% 70%, #fff 60%, transparent 61%);
-  opacity:.45; animation: drift 80s linear infinite; }
+  opacity:.45; animation: drift 90s linear infinite;}
   @keyframes drift{from{transform:translateY(0)}to{transform:translateY(-1400px)}}
 
-  /* header / brand */
-  header{position:relative;z-index:3;padding:20px 24px;display:flex;align-items:center;gap:18px}
-  .logoWrap{width:84px;height:84px;border-radius:16px;background:linear-gradient(135deg,#09f7b8,#00b894);display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,230,134,.12)}
-  /* inline svg logo inside */
-  .brandTitle{line-height:1}
-  h1{margin:0;font-size:20px;color:#eafff5;letter-spacing:1px}
-  .tag{margin-top:4px;color:var(--muted);font-size:13px}
+  /* header */
+  header{position:relative;z-index:3;padding:18px 24px;display:flex;align-items:center;gap:16px}
+  .logoBox{width:76px;height:76px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#009b66);display:grid;place-items:center;box-shadow:0 12px 40px rgba(0,230,134,0.08)}
+  .brand{line-height:1}
+  h1{margin:0;font-size:20px;letter-spacing:1px}
+  .sub{margin-top:4px;color:var(--muted);font-size:13px}
 
-  /* app shell */
-  #app{position:relative;z-index:2;display:flex;flex-direction:column;min-height:calc(100vh - 100px)}
-  .topbar{display:flex;align-items:center;padding:12px 22px;gap:12px;border-top:1px solid rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.02);background:linear-gradient(90deg, rgba(0,0,0,0.15), rgba(0,0,0,0.06))}
+  /* app */
+  #app{position:relative;z-index:2;display:flex;flex-direction:column;min-height:calc(100vh - 110px)}
+  .topbar{display:flex;align-items:center;padding:12px 22px;gap:12px;border-top:1px solid rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.02);background:linear-gradient(90deg, rgba(0,0,0,0.12), rgba(0,0,0,0.05))}
   .nav{display:flex;gap:8px}
   .nav button{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);padding:8px 12px;border-radius:999px;cursor:pointer}
   .nav button.active{border-color:rgba(0,230,134,0.45);color:#eafff5;background:linear-gradient(90deg, rgba(0,230,134,0.04), rgba(0,230,134,0.01))}
   .userInfo{margin-left:auto;color:var(--muted);font-size:13px}
 
-  /* layout */
   .layout{display:grid;grid-template-columns:1fr 420px;gap:18px;padding:18px;flex:1;overflow:auto}
   @media (max-width:980px){.layout{grid-template-columns:1fr}}
-  .panel{background:var(--card);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 18px 40px rgba(0,0,0,0.5)}
+  .panel{background:var(--card);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 18px 40px rgba(0,0,0,0.45)}
   .kpis{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
   .kpi{flex:1;min-width:140px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px}
   .kpi .num{font-size:22px;font-weight:700;color:var(--accent)}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   @media (max-width:800px){.grid2{grid-template-columns:1fr}}
 
-  /* inputs/buttons */
-  .searchRow{display:flex;gap:8px;align-items:center}
   input[type=text], textarea, select{background:var(--glass);border:1px solid rgba(255,255,255,0.03);color:inherit;padding:10px;border-radius:8px;outline:none;width:100%}
   button.btn{background:linear-gradient(180deg,var(--accent),#00b36a);border:none;padding:10px 14px;border-radius:10px;color:#012;cursor:pointer;font-weight:700}
   button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px 10px;border-radius:8px}
 
-  /* table */
   table{width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden}
   th,td{padding:8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.02);font-size:13px}
   tr:hover td{background:rgba(0,0,0,0.06)}
   .mapFrame{width:100%;height:300px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
   .foot{padding:12px;text-align:center;color:var(--muted);font-size:13px}
-
-  /* toast */
-  #toast{position:fixed;right:18px;bottom:18px;background:#012b23;border:1px solid rgba(0,230,134,0.08);padding:10px 14px;border-radius:10px;color:#dff;opacity:0;transform:translateY(8px);transition:all .25s}
+  #toast{position:fixed;right:18px;bottom:18px;background:#022; border:1px solid rgba(0,230,134,0.08);padding:10px 14px;border-radius:10px;color:#dff;opacity:0;transform:translateY(8px);transition:all .25s}
 
   /* login modal */
   #loginModal{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.7));z-index:6}
-  .loginCard{width:380px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 18px 60px rgba(0,0,0,0.75)}
+  .loginCard{width:420px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 18px 60px rgba(0,0,0,0.75)}
   .loginCard h3{margin:0 0 8px;color:var(--accent)}
   .tiny{font-size:13px;color:var(--muted)}
   textarea{min-height:100px;resize:vertical}
   mark{background:rgba(255,215,0,0.2);padding:2px;border-radius:4px}
+  .logoSvg{width:44px;height:44px}
 
-  /* animations */
+  /* small animations */
   .fadeIn{animation:fadeIn .45s ease both}
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .monos{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace}
 </style>
 </head>
 <body>
   <div class="stars" aria-hidden="true"></div>
 
-  <!-- Login modal (demo credentials) -->
+  <!-- Login Modal -->
   <div id="loginModal">
     <div class="loginCard fadeIn" role="dialog" aria-labelledby="loginTitle">
       <div style="display:flex;gap:12px;align-items:center">
-        <div class="logoWrap" aria-hidden="true">
-          <!-- SVG logo -->
-          <svg viewBox="0 0 64 64" width="46" height="46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#00f0b0"/><stop offset="1" stop-color="#17d0ff"/></linearGradient></defs>
-            <path d="M32 6c9 6 18 6 18 6v16c0 14-9 21-18 24-9-3-18-10-18-24V12s9 0 18-6Z" stroke="url(#g)" stroke-width="2.4" fill="rgba(0,255,150,0.04)"/>
-            <circle cx="24" cy="26" r="2.4" stroke="#00ffb0"/>
-            <circle cx="32" cy="33" r="2.4" stroke="#00ffb0"/>
-            <circle cx="40" cy="25" r="2.4" stroke="#00ffb0"/>
+        <div class="logoBox" aria-hidden="true">
+          <!-- inline SVG logo -->
+          <svg viewBox="0 0 64 64" class="logoSvg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#00f0b0"/><stop offset="1" stop-color="#17d0ff"/></linearGradient></defs>
+            <path d="M32 6c9 6 18 6 18 6v16c0 14-9 21-18 24-9-3-18-10-18-24V12s9 0 18-6Z" stroke="url(#g1)" stroke-width="2.4" fill="rgba(0,255,150,0.04)"/>
+            <circle cx="24" cy="26" r="2.4" stroke="#00ffb0"/><circle cx="32" cy="33" r="2.4" stroke="#00ffb0"/><circle cx="40" cy="25" r="2.4" stroke="#00ffb0"/>
             <path d="M48 18a5 5 0 0 1-6-6 6 6 0 1 0 6 6Z" fill="#00ffb0" opacity=".12"/>
           </svg>
         </div>
@@ -118,14 +110,14 @@
     </div>
   </div>
 
-  <!-- App -->
+  <!-- App Shell -->
   <div id="app" aria-hidden="true">
     <header>
       <div style="display:flex;align-items:center;gap:12px">
-        <div class="logoWrap" aria-hidden="true" style="width:56px;height:56px"></div>
-        <div class="brandTitle">
+        <div class="logoBox" aria-hidden="true" style="width:56px;height:56px"></div>
+        <div>
           <h1>SMART CRIME TRACKER</h1>
-          <div class="tag">Presentation • Demo UI • No live telecom hooks</div>
+          <div class="sub">Presentation • Demo UI — No live telecom hooks</div>
         </div>
       </div>
     </header>
@@ -148,9 +140,9 @@
         <!-- Dashboard -->
         <section id="tab-dashboard" class="panel">
           <div class="kpis">
-            <div class="kpi"><div class="tiny">Active Cases</div><div class="num" id="kActive">0</div></div>
-            <div class="kpi"><div class="tiny">High Risk</div><div class="num" id="kHigh">0</div></div>
-            <div class="kpi"><div class="tiny">Alerts Today</div><div class="num" id="kAlerts">0</div></div>
+            <div class="kpi"><div class="tiny">Active Cases</div><div class="num monos" id="kActive">0</div></div>
+            <div class="kpi"><div class="tiny">High Risk</div><div class="num monos" id="kHigh">0</div></div>
+            <div class="kpi"><div class="tiny">Alerts Today</div><div class="num monos" id="kAlerts">0</div></div>
           </div>
 
           <div class="grid2">
@@ -177,7 +169,7 @@
         <!-- Number Search -->
         <section id="tab-search" class="panel" style="display:none">
           <h4 style="color:var(--accent);margin-top:0">Number Search</h4>
-          <div class="searchRow" style="margin-bottom:10px">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
             <input id="searchNum" placeholder="e.g. 01700000000"/>
             <button class="btn" onclick="doNumberSearch()">Search</button>
             <button class="ghost" onclick="clearSearch()">Clear</button>
@@ -200,7 +192,7 @@
         <!-- AI -->
         <section id="tab-ai" class="panel" style="display:none">
           <h4 style="color:var(--accent);margin-top:0">AI Analyzer (Demo)</h4>
-          <p class="tiny">Paste event text — demo highlights suspicious keywords (local demo engine).</p>
+          <p class="tiny">Paste event text — demo highlights suspicious keywords and produces a risk score.</p>
           <textarea id="aiInput" placeholder="Example: cash drop at port, meet handler at gate 3"></textarea>
           <div style="display:flex;gap:8px;margin-top:8px">
             <button class="btn" onclick="runAIDemo()">Analyze</button>
@@ -226,7 +218,8 @@
         <div class="panel" style="margin-bottom:12px">
           <h4 style="margin:0 0 8px;color:var(--accent)">Map (Embed Demo)</h4>
           <div class="mapFrame">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14604.69688454172!2d90.40744!3d23.7104!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1" style="width:100%;height:100%;border:0" loading="lazy"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14604.69688454172!2d90.40744!3d23.7104!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1"
+              style="width:100%;height:100%;border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
         </div>
 
@@ -255,9 +248,9 @@
 <script>
   const $ = s=>document.querySelector(s);
   const $$ = s=>document.querySelectorAll(s);
-  const toast = t=>{ const e = $('#toast'); e.textContent = t; e.style.opacity=1; setTimeout(()=>e.style.opacity=0,2000); }
+  const toast = t=>{ const e = $('#toast'); e.textContent = t; e.style.opacity=1; setTimeout(()=>e.style.opacity=0,2100); }
 
-  // login
+  // LOGIN
   function doLogin(){
     const u = $('#Luser').value.trim(), p = $('#Lpass').value;
     if(!u||!p){ $('#Lmsg').textContent='Enter credentials'; return; }
@@ -271,7 +264,7 @@
   }
   function fillQuick(){ $('#Luser').value='admin'; $('#Lpass').value='Allah@1'; $('#Lmsg').textContent=''; }
 
-  // navigation
+  // NAV
   function navTo(e){
     $$('.nav button').forEach(b=>b.classList.remove('active'));
     e.currentTarget.classList.add('active');
@@ -285,18 +278,13 @@
     if(btn) btn.click();
   }
 
-  // bootstrap
-  function bootstrap(){
-    animate('#kActive',5,30); animate('#kHigh',1,40); animate('#kAlerts',2,40);
-  }
-  function animate(sel,target,ms){
-    let n=0; const el=$(sel); const iv=setInterval(()=>{ n++; el.textContent=n; if(n>=target) clearInterval(iv); }, ms);
-  }
+  // BOOTSTRAP KPIs
+  function bootstrap(){ animate('#kActive',5,30); animate('#kHigh',1,40); animate('#kAlerts',2,40); }
+  function animate(sel,target,ms){ let n=0; const el=$(sel); const iv=setInterval(()=>{ n++; el.textContent=n; if(n>=target) clearInterval(iv); }, ms); }
 
-  // Number search demo
+  // NUMBER SEARCH (demo)
   function doNumberSearch(){
-    const q = $('#searchNum').value.trim();
-    const out = $('#searchResult'); out.innerHTML='';
+    const q = $('#searchNum').value.trim(); const out = $('#searchResult'); out.innerHTML='';
     if(!q){ out.textContent='Provide number'; return; }
     let resp;
     if(q.includes('0170')||q.includes('0171')) resp = `<b>${q}</b> — Owner: Unknown (Flagged) • LastSeen: Motijheel • <span style="color:#ffd700">Risk: High</span>`;
@@ -307,7 +295,7 @@
   }
   function clearSearch(){ $('#searchNum').value=''; $('#searchResult').innerHTML=''; }
 
-  // CDR demo
+  // CDR (demo)
   const SAMPLE = [
     {t:'2025-09-01 09:12', caller:'01700000001', callee:'01800000002', dur:120, cell:'Dhaka'},
     {t:'2025-09-01 11:05', caller:'01800000002', callee:'01700000003', dur:45, cell:'Chattogram'},
@@ -318,19 +306,19 @@
   function renderCDR(rows){ const t=$('#cdrTbl tbody'); t.innerHTML=''; (rows||[]).forEach(r=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${r.t}</td><td>${r.caller}</td><td>${r.callee}</td><td>${r.dur}</td><td>${r.cell}</td>`; t.appendChild(tr); }); }
   function exportCDR(){ const rows=SAMPLE; if(!rows.length){ toast('No CDR'); return;} const csv=['Time,Caller,Callee,Duration,Cell', ...rows.map(r=>`${r.t},${r.caller},${r.callee},${r.dur},${r.cell}`)].join('\n'); const b=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='cdr_demo.csv'; a.click(); toast('CDR exported'); }
 
-  // Handlers analyze
+  // HANDLERS
   function analyzeHandlers(){ const tbl=$('#handlerTbl'); tbl.innerHTML=''; ['HND-0173****210','HND-0182****905','HND-0167****441'].forEach(n=>{ const sc=40+Math.floor(Math.random()*50); const tr=document.createElement('tr'); tr.innerHTML=`<td>${n}</td><td>${sc}</td>`; tbl.appendChild(tr); }); toast('Handlers analyzed (demo)'); }
 
-  // AI demo
+  // AI demo (keyword highlight + scoring)
   const BAD = ['cash','drop','handler','gold','port','gate','transfer','hawala','parcel','meet'];
-  function runAIDemo(){ const txt=$('#aiInput').value.trim(); if(!txt){ toast('Write text to analyze'); return;} const tokens=txt.split(/\b/); const processed=tokens.map(t=> BAD.includes(t.toLowerCase())? `<mark style="background:rgba(255,215,0,0.22);padding:2px;border-radius:3px">${t}</mark>`:t).join(''); const score=Math.min(98, (txt.match(/\d+/g)||[]).join('').length + Math.min(70,Math.floor(txt.length/2))); $('#aiOut').innerHTML = `<div style="background:rgba(0,0,0,0.12);padding:12px;border-radius:8px"><b>Risk Score:</b> ${score}% &nbsp; <span style="color:${score>70?'#ff6b6b':'#ffd166'}">${score>70?'High':'Moderate'}</span><div style="margin-top:8px">${processed}</div></div>`; toast('AI demo complete'); }
+  function runAIDemo(){ const txt=$('#aiInput').value.trim(); if(!txt){ toast('Write text to analyze'); return;} const tokens=txt.split(/\b/); const processed=tokens.map(t=> BAD.includes(t.toLowerCase())? `<mark>${t}</mark>`:t).join(''); const score=Math.min(98, (txt.match(/\d+/g)||[]).join('').length + Math.min(70,Math.floor(txt.length/2))); $('#aiOut').innerHTML = `<div style="background:rgba(0,0,0,0.12);padding:12px;border-radius:8px"><b>Risk Score:</b> ${score}% &nbsp; <span style="color:${score>70?'#ff6b6b':'#ffd166'}">${score>70?'High':'Moderate'}</span><div style="margin-top:8px">${processed}</div></div>`; toast('AI demo complete'); }
   function clearAIDemo(){ $('#aiInput').value=''; $('#aiOut').innerHTML=''; }
 
-  // FB demo
-  function fbAnalyze(){ const url=$('#fbUrl').value.trim(); if(!url){ toast('Paste a profile link'); return;} const name=(url.match(/facebook\.com\/([^\/?#]+)/i)||[])[1]||'unknown'; const s=40+Math.floor(Math.random()*60); $('#fbOut').innerHTML=`<div style="background:rgba(0,0,0,0.12);padding:10px;border-radius:8px"><b>${name}</b> — Public signals score: <b>${s}%</b></div>`; toast('FB demo scored'); }
+  // FB demo (placeholder)
+  function fbAnalyze(){ const url=$('#fbUrl').value.trim(); if(!url){ toast('Paste public profile link'); return;} const name=(url.match(/facebook\.com\/([^\/?#]+)/i)||[])[1]||'unknown'; const s=40+Math.floor(Math.random()*60); $('#fbOut').innerHTML=`<div style="background:rgba(0,0,0,0.12);padding:10px;border-radius:8px"><b>${name}</b> — Public signals score: <b>${s}%</b></div>`; toast('FB demo scored'); }
   function fbClear(){ $('#fbUrl').value=''; $('#fbOut').innerHTML=''; }
 
-  // admin
+  // ADMIN approve/reject
   function approve(i){ $('#req'+i).textContent='Approved'; toast('Approved (demo)'); }
   function reject(i){ $('#req'+i).textContent='Rejected'; toast('Rejected (demo)'); }
 
