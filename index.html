@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Smart Crime Tracker — Presentation Demo</title>
+<style>
+  :root{
+    --bg1:#02131a; --bg2:#003a2f; --accent:#00e686; --muted:#9fdad0; --card:#052027;
+    --glass: rgba(255,255,255,0.04);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, Arial;color:#eafff5;background:linear-gradient(180deg,var(--bg1),var(--bg2));overflow:hidden}
+  /* animated stars (no external images) */
+  .stars{position:fixed;inset:0;background:
+    radial-gradient(2px 2px at 5% 10%, #fff 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 15% 30%, #fff 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 25% 60%, #fff 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 40% 20%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 60% 40%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 80% 70%, #fff 50%, transparent 51%);
+  opacity:.45;animation: drift 60s linear infinite;z-index:0; }
+  @keyframes drift{from{transform:translateY(0)}to{transform:translateY(-1200px)}}
+
+  header{position:relative;z-index:3;padding:26px 20px 12px;text-align:center}
+  .hero{display:flex;gap:14px;align-items:center;justify-content:center}
+  .logo{
+    width:86px;height:86px;border-radius:18px;display:grid;place-items:center;
+    background:linear-gradient(135deg,#09f7b8,#00b894);box-shadow:0 10px 30px #00e68622, inset 0 2px 8px rgba(255,255,255,0.05)
+  }
+  .brand{line-height:1}
+  h1{margin:0;font-size:22px;letter-spacing:1px;color:#eafff5;text-shadow:0 4px 28px #00e68622}
+  p.tag{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+  /* app shell */
+  #app{position:fixed;inset:0;display:flex;flex-direction:column;z-index:2}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 20px;background:linear-gradient(90deg, rgba(0,0,0,0.25), rgba(0,0,0,0.15));border-bottom:1px solid rgba(255,255,255,0.03)}
+  .nav{display:flex;gap:10px;align-items:center}
+  .nav button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px 12px;border-radius:999px;cursor:pointer}
+  .nav button.active{border-color:rgba(0,230,134,0.6);color:#eafff5;background:linear-gradient(90deg, rgba(0,230,134,0.06), rgba(0,230,134,0.02))}
+  .userarea{margin-left:auto;color:var(--muted);font-size:13px}
+
+  .layout{display:grid;grid-template-columns:1fr 420px;gap:20px;padding:18px;flex:1;overflow:auto}
+  @media (max-width:1000px){.layout{grid-template-columns:1fr;}}
+  .main{padding:6px}
+  .panel{background:var(--card);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 30px rgba(0,0,0,0.5)}
+  .kpis{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .kpi{flex:1;min-width:160px;background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.06));padding:12px;border-radius:10px;text-align:left}
+  .kpi .num{font-size:22px;font-weight:700;color:var(--accent)}
+  .gridCards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media (max-width:800px){.gridCards{grid-template-columns:1fr}}
+
+  /* controls and widgets */
+  .searchRow{display:flex;gap:8px;align-items:center}
+  input[type=text], textarea, select{background:var(--glass);border:1px solid rgba(255,255,255,0.03);color:inherit;padding:10px;border-radius:8px;outline:none;width:100%}
+  button.btn{background:linear-gradient(180deg,var(--accent),#00b36a);border:none;padding:10px 14px;border-radius:10px;color:#012;cursor:pointer;font-weight:700}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+
+  /* nice table */
+  table{width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden}
+  th,td{padding:8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px}
+  tr:hover td{background:rgba(0,0,0,0.06)}
+
+  /* map frame */
+  .mapFrame{width:100%;height:320px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
+
+  /* footer small */
+  .foot{padding:12px;text-align:center;color:var(--muted);font-size:13px}
+
+  /* toast */
+  #toast{position:fixed;right:18px;bottom:18px;background:#012b23;border:1px solid rgba(0,230,134,0.08);padding:10px 14px;border-radius:10px;color:#dff;opacity:0;transform:translateY(8px);transition:all .25s}
+
+  /* login modal */
+  #loginModal{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.6));z-index:6}
+  .loginCard{width:360px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 18px 60px rgba(0,0,0,0.7)}
+  .loginCard h3{margin:0 0 8px;color:var(--accent)}
+  .tiny{font-size:13px;color:var(--muted)}
+
+  /* animations */
+  .fadeIn{animation:fadeIn .45s ease both}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+
+  <!-- Login modal (demo) -->
+  <div id="loginModal">
+    <div class="loginCard fadeIn" role="dialog" aria-labelledby="loginTitle">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="logo" aria-hidden="true">
+          <!-- inline SVG logo -->
+          <svg viewBox="0 0 64 64" width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#00f0b0"/><stop offset="1" stop-color="#17d0ff"/></linearGradient></defs>
+            <path d="M32 6c9 6 18 6 18 6v16c0 14-9 21-18 24-9-3-18-10-18-24V12s9 0 18-6Z" stroke="url(#g1)" stroke-width="2.6" fill="rgba(0,255,150,0.04)"/>
+            <circle cx="24" cy="26" r="2.4" stroke="#00ffb0"/>
+            <circle cx="32" cy="33" r="2.4" stroke="#00ffb0"/>
+            <circle cx="40" cy="25" r="2.4" stroke="#00ffb0"/>
+            <path d="M48 18a5 5 0 0 1-6-6 6 6 0 1 0 6 6Z" fill="#00ffb0" opacity=".12"/>
+          </svg>
+        </div>
+        <div>
+          <h3 id="loginTitle">SMART CRIME TRACKER — DEMO</h3>
+          <div class="tiny">Presentation build — demo credentials: <b>admin / Allah@1</b> &nbsp; <span style="opacity:.8">user / 1234</span></div>
+        </div>
+      </div>
+
+      <hr style="border:none;height:8px;background:linear-gradient(90deg,transparent,rgba(0,255,150,0.06),transparent);margin:12px 0 14px"/>
+
+      <label class="tiny">User</label>
+      <input id="Luser" type="text" placeholder="admin" style="margin-bottom:8px"/>
+
+      <label class="tiny">Password</label>
+      <input id="Lpass" type="password" placeholder="Allah@1" style="margin-bottom:12px"/>
+
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="doLogin()">Enter</button>
+        <button class="ghost" onclick="fillQuick()">Fill demo</button>
+      </div>
+      <p id="Lmsg" class="tiny" style="margin-top:10px;color:#ffb3b3"></p>
+    </div>
+  </div>
+
+  <!-- app shell -->
+  <div id="app" aria-hidden="true">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="logo" aria-hidden="true" style="width:56px;height:56px"></div>
+        <div>
+          <h1 style="margin:0;font-size:16px">SMART CRIME TRACKER</h1>
+          <div class="tiny">Presentation • Demo UI • No live telecom hooks</div>
+        </div>
+      </div>
+
+      <nav class="nav" role="navigation" aria-label="Main">
+        <button class="navbtn active" data-tab="dashboard" onclick="navTo(event)">Dashboard</button>
+        <button class="navbtn" data-tab="search" onclick="navTo(event)">Number Search</button>
+        <button class="navbtn" data-tab="cdr" onclick="navTo(event)">CDR</button>
+        <button class="navbtn" data-tab="map" onclick="navTo(event)">Map</button>
+        <button class="navbtn" data-tab="ai" onclick="navTo(event)">AI</button>
+        <button class="navbtn" data-tab="fb" onclick="navTo(event)">Facebook</button>
+        <button class="navbtn" data-tab="admin" onclick="navTo(event)">Admin</button>
+      </nav>
+
+      <div class="userarea" id="userInfo">Not logged in</div>
+    </header>
+
+    <div class="layout">
+      <main class="main">
+        <!-- Dashboard -->
+        <section id="tab-dashboard" class="panel fadeIn">
+          <div class="kpis">
+            <div class="kpi"><div class="tiny">Active Cases</div><div class="num" id="kActive">0</div></div>
+            <div class="kpi"><div class="tiny">High Risk</div><div class="num" id="kHigh">0</div></div>
+            <div class="kpi"><div class="tiny">Alerts Today</div><div class="num" id="kAlerts">0</div></div>
+          </div>
+
+          <div class="gridCards">
+            <div class="panel card">
+              <h3 style="margin-top:0;color:var(--accent)">Quick Actions</h3>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn" onclick="openTab('search')">🔎 Number Search</button>
+                <button class="btn" onclick="openTab('map')">🛰 Map</button>
+                <button class="btn" onclick="openTab('cdr')">📋 Load CDR</button>
+                <button class="btn" onclick="openTab('ai')">🤖 Run AI</button>
+              </div>
+            </div>
+
+            <div class="panel card">
+              <h3 style="margin-top:0;color:var(--accent)">Recent Alerts (Demo)</h3>
+              <table aria-live="polite">
+                <thead><tr><th>Time</th><th>Event</th><th>Risk</th></tr></thead>
+                <tbody id="alertsTbl">
+                  <tr><td>09:12</td><td>Unusual port activity</td><td><span style="color:#ffd800">Medium</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Search -->
+        <section id="tab-search" class="panel" style="display:none">
+          <h3 style="color:var(--accent)">Number Search</h3>
+          <div class="searchRow" style="margin-bottom:12px">
+            <input id="searchNum" type="text" placeholder="e.g. 01700000000"/>
+            <button class="btn" onclick="doNumberSearch()">Search</button>
+            <button class="ghost" onclick="clearSearch()">Clear</button>
+          </div>
+          <div class="panel" id="searchResult" style="margin-top:8px"></div>
+        </section>
+
+        <!-- CDR -->
+        <section id="tab-cdr" class="panel" style="display:none">
+          <h3 style="color:var(--accent)">Call Detail Records (CDR) — Demo</h3>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <button class="btn" onclick="loadCDR()">Load Sample CDR</button>
+            <button class="ghost" onclick="exportCDR()">Export CSV</button>
+          </div>
+          <div style="overflow:auto">
+            <table id="cdrTbl"><thead><tr><th>Time</th><th>Caller</th><th>Callee</th><th>Dur(s)</th><th>Cell</th></tr></thead><tbody></tbody></table>
+          </div>
+        </section>
+
+        <!-- AI -->
+        <section id="tab-ai" class="panel" style="display:none">
+          <h3 style="color:var(--accent)">AI Connectivity — Demo Analyzer</h3>
+          <p class="tiny">Paste event text — demo engine highlights suspicious keywords and gives a simple scoring.</p>
+          <textarea id="aiInput" placeholder="Example: cash drop at port, meet handler at gate 3"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" onclick="runAIDemo()">Analyze</button>
+            <button class="ghost" onclick="clearAIDemo()">Clear</button>
+          </div>
+          <div id="aiOut" style="margin-top:12px"></div>
+        </section>
+
+        <!-- Facebook -->
+        <section id="tab-fb" class="panel" style="display:none">
+          <h3 style="color:var(--accent)">Facebook / Social — Demo</h3>
+          <p class="tiny">Paste a public profile link — demo only (real integration requires Graph API & permissions).</p>
+          <div style="display:flex;gap:8px">
+            <input id="fbUrl" type="text" placeholder="https://facebook.com/username"/>
+            <button class="btn" onclick="fbAnalyze()">Analyze</button>
+            <button class="ghost" onclick="fbClear()">Clear</button>
+          </div>
+          <div id="fbOut" style="margin-top:12px"></div>
+        </section>
+
+      </main>
+
+      <!-- Right column -->
+      <aside>
+        <div class="panel" style="margin-bottom:12px">
+          <h4 style="margin:0 0 8px;color:var(--accent)">Map (Satellite)</h4>
+          <div class="mapFrame" id="mapFrame">
+            <!-- embed Google Maps (presentation) -->
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14604.69688454172!2d90.40744!3d23.7104!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1"
+              style="width:100%;height:100%;border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom:12px">
+          <h4 style="margin:0 0 8px;color:var(--accent)">Suspicious Handlers</h4>
+          <table><thead><tr><th>Handler</th><th>Score</th></tr></thead>
+            <tbody id="handlerTbl">
+              <tr><td>HND-0173****210</td><td>78</td></tr>
+              <tr><td>HND-0182****905</td><td>64</td></tr>
+            </tbody></table>
+          <div style="margin-top:8px"><button class="btn" onclick="analyzeHandlers()">Re-analyze</button></div>
+        </div>
+
+        <div class="panel">
+          <h4 style="margin:0 0 8px;color:var(--accent)">Admin Approval</h4>
+          <table id="adminTbl"><thead><tr><th>Request</th><th>User</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>CDR Access: 01700000000</td><td>ops_17</td><td id="req0">Pending</td>
+                <td><button class="navbtn" onclick="approve(0)">Approve</button> <button class="navbtn" onclick="reject(0)">Reject</button></td></tr>
+              <tr><td>Geo Sweep: Tati Bazar</td><td>op_unit</td><td id="req1">Pending</td>
+                <td><button class="navbtn" onclick="approve(1)">Approve</button> <button class="navbtn" onclick="reject(1)">Reject</button></td></tr>
+            </tbody></table>
+        </div>
+      </aside>
+    </div>
+
+    <div class="foot">Presentation Demo • Use only with lawful authorization • © Smart Crime Tracker</div>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // small helper $
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+  const toast = (t)=>{ const e = $('#toast'); e.textContent = t; e.style.opacity=1; setTimeout(()=>e.style.opacity=0,2000); }
+
+  // initial state
+  let USER = null;
+  function doLogin(){
+    const u = $('#Luser').value.trim(), p = $('#Lpass').value;
+    if(!u||!p){ $('#Lmsg').textContent = 'Enter credentials'; return; }
+    if((u==='admin' && p==='Allah@1') || (u==='user' && p==='1234')){
+      USER = {id:u,role: u==='admin'?'admin':'analyst'};
+      $('#loginModal').style.display = 'none';
+      $('#app').removeAttribute('aria-hidden');
+      $('#userInfo').textContent = `Signed in: ${USER.id} • role: ${USER.role}`;
+      toast('Logged in as '+USER.id);
+      bootstrap();
+    } else {
+      $('#Lmsg').textContent = 'Invalid demo credentials';
+    }
+  }
+  function fillQuick(){ $('#Luser').value='admin'; $('#Lpass').value='Allah@1'; }
+
+  // navigation
+  function navTo(e){
+    const btn = e.currentTarget;
+    $$('.nav button').forEach(x=>x.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    $$('#app main section').forEach(s=>s.style.display='none');
+    const id = '#tab-'+tab;
+    const target = document.querySelector(id);
+    if(target) target.style.display = 'block';
+    else { // fallback for old id names
+      const map = { dashboard:'#tab-dashboard', search:'#tab-search', cdr:'#tab-cdr', map:'#tab-map', ai:'#tab-ai', fb:'#tab-fb', admin:'#tab-admin' };
+      const t = map[tab];
+      if(t) document.querySelector(t).style.display='block';
+    }
+  }
+  function openTab(name){ $$('.nav button').forEach(x=>x.classList.remove('active')); const b = Array.from($$('.nav button')).find(n=>n.dataset.tab===name); if(b) b.classList.add('active'); // simulate click
+    // hide all main sections, then show matching
+    $$('#app main section').forEach(s=>s.style.display='none');
+    const id='#tab-'+name;
+    const el = document.querySelector(id);
+    if(el) el.style.display='block';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  // bootstrap demo values
+  function bootstrap(){
+    // kpi animate
+    animateNumber('#kActive',5,40);
+    animateNumber('#kHigh',1,40);
+    animateNumber('#kAlerts',2,40);
+    // prefill CDR table empty
+    renderCDR([]);
+  }
+  function animateNumber(sel,target,ms=30){
+    let n=0; const el=$(sel);
+    const iv=setInterval(()=>{ n++; el.textContent = n; if(n>=target) clearInterval(iv); }, ms);
+  }
+
+  // Number search (demo)
+  function doNumberSearch(){
+    const q = $('#searchNum').value.trim();
+    const out = $('#searchResult');
+    out.innerHTML = '';
+    if(!q){ out.innerHTML = '<div class="tiny">Provide number</div>'; return; }
+    // demo rules
+    let resp;
+    if(q.includes('0170')||q.includes('0171')) resp = `<b>${q}</b> — Owner: Unknown (Flagged) • LastSeen: Motijheel • <span style="color:#ffd700">Risk: High</span>`;
+    else if(q.includes('018')) resp = `<b>${q}</b> — Owner: Local Trader • Location: Bashundhara • <span style="color:#9fdad0">Risk: Low</span>`;
+    else resp = `<b>${q}</b> — No public records (demo)`;
+    out.innerHTML = `<div style="padding:10px;background:rgba(0,0,0,0.12);border-radius:8px">${resp}</div>`;
+    toast('Number search (demo) complete');
+  }
+  function clearSearch(){ $('#searchNum').value=''; $('#searchResult').innerHTML=''; }
+
+  // CDR demo
+  const SAMPLE_CDR = [
+    {t:'2025-09-01 09:12', caller:'01700000001', callee:'01800000002', dur:120, cell:'Dhaka'},
+    {t:'2025-09-01 11:05', caller:'01800000002', callee:'01700000003', dur:45, cell:'Chattogram'},
+    {t:'2025-09-02 23:50', caller:'01700000001', callee:'01900000004', dur:12, cell:'Rangpur'},
+    {t:'2025-09-03 10:10', caller:'01700000005', callee:'01700000001', dur:35, cell:'Sylhet'}
+  ];
+  function loadCDR(){ renderCDR(SAMPLE_CDR); toast('Sample CDR loaded'); }
+  function renderCDR(rows){ const tbody = document.querySelector('#cdrTbl tbody'); tbody.innerHTML=''; (rows||[]).forEach(r=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${r.t}</td><td>${r.caller}</td><td>${r.callee}</td><td>${r.dur}</td><td>${r.cell}</td>`; tbody.appendChild(tr); }); }
+  function exportCDR(){
+    const rows = SAMPLE_CDR;
+    if(!rows.length){ toast('No CDR to export'); return; }
+    const csv = ['Time,Caller,Callee,Duration,Cell', ...rows.map(r=>`${r.t},${r.caller},${r.callee},${r.dur},${r.cell}`)].join('\n');
+    const blob = new Blob([csv], {type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='cdr_demo.csv'; a.click(); toast('CDR exported');
+  }
+
+  // Handlers analyze demo
+  function analyzeHandlers(){
+    // simple demo: randomize scores
+    const tbl = $('#handlerTbl'); tbl.innerHTML='';
+    const list = ['HND-0173****210','HND-0182****905','HND-0167****441'];
+    list.forEach(n=>{ const sc = 40 + Math.floor(Math.random()*50); const tr=document.createElement('tr'); tr.innerHTML=`<td>${n}</td><td>${sc}</td>`; tbl.appendChild(tr); });
+    toast('Handlers analyzed (demo)');
+  }
+
+  // AI Demo - keyword highlight and scoring
+  const BAD = ['cash','drop','handler','gold','port','gate','transfer','hawala','parcel','meet'];
+  function runAIDemo(){
+    const txt = $('#aiInput').value.trim();
+    if(!txt){ toast('Write something to analyze'); return; }
+    const tokens = txt.split(/\b/);
+    const processed = tokens.map(t=> BAD.includes(t.toLowerCase()) ? `<mark style="background:rgba(255,215,0,0.22);padding:2px;border-radius:3px">${t}</mark>` : t ).join('');
+    const score = Math.min(98, (txt.match(/\d+/g)||[]).join('').length + Math.min(70,Math.floor(txt.length/2)));
+    $('#aiOut').innerHTML = `<div style="background:rgba(0,0,0,0.12);padding:12px;border-radius:8px"><b>Risk Score:</b> ${score}% &nbsp; <span style="color:${score>70?'#ff6b6b':'#ffd166'}">${score>70?'High':'Moderate'}</span><div style="margin-top:8px">${processed}</div></div>`;
+    toast('AI demo complete');
+  }
+  function clearAIDemo(){ $('#aiInput').value=''; $('#aiOut').innerHTML=''; }
+
+  // Facebook demo
+  function fbAnalyze(){
+    const url = $('#fbUrl').value.trim();
+    if(!url){ toast('Paste public profile link'); return; }
+    const name = (url.match(/facebook\.com\/([^\/?#]+)/i)||[])[1] || 'unknown';
+    const s = 40 + Math.floor(Math.random()*60);
+    $('#fbOut').innerHTML = `<div style="background:rgba(0,0,0,0.12);padding:10px;border-radius:8px"><b>${name}</b> — Public signals score: <b>${s}%</b></div>`;
+    toast('FB demo scored');
+  }
+  function fbClear(){ $('#fbUrl').value=''; $('#fbOut').innerHTML=''; }
+
+  // admin actions
+  function approve(i){ document.getElementById('req'+i).textContent='Approved'; toast('Approved (demo)'); }
+  function reject(i){ document.getElementById('req'+i).textContent='Rejected'; toast('Rejected (demo)'); }
+
+  // small utilities
+  function clearSearch(){ $('#searchNum').value=''; $('#searchResult').innerHTML=''; }
+  // allow Enter to submit in certain inputs
+  document.addEventListener('keydown', e=>{ if(e.key==='Enter' && $('#loginModal') && $('#loginModal').style.display!=='none'){ doLogin(); }});
+
+  // initialize default visible tab after login
+  // (login hides modal and calls bootstrap)
+  // ensure initial nav state
+  document.addEventListener('DOMContentLoaded', ()=>{ /* nothing until login */ });
+</script>
+</body>
+</html>
