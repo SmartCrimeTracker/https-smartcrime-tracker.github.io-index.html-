@@ -1,370 +1,102 @@
-<!doctype html>
-<html lang="bn">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Smart Crime Tracker — Demo (Self-contained)</title>
-<style>
-:root{
-  --bg1:#02131a; --bg2:#003a2f; --accent:#00e686; --muted:#9fdad0;
-  --card:rgba(5,32,39,0.85);
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, Arial;color:#eafff5;background:linear-gradient(180deg,var(--bg1),var(--bg2));overflow:hidden}
-
-/* animated starfield (pure CSS) */
-.stars{
-  position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(1px 1px at 5% 10%, #fff 60%, transparent 61%),
-    radial-gradient(1px 1px at 20% 30%, #fff 60%, transparent 61%),
-    radial-gradient(1px 1px at 35% 60%, #fff 60%, transparent 61%),
-    radial-gradient(1px 1px at 50% 20%, #fff 60%, transparent 61%),
-    radial-gradient(1px 1px at 65% 45%, #fff 60%, transparent 61%),
-    radial-gradient(1px 1px at 80% 70%, #fff 60%, transparent 61%);
-  opacity:.45;
-  animation: drift 80s linear infinite;
-}
-@keyframes drift{from{transform:translateY(0)}to{transform:translateY(-1400px)}}
-
-/* top brand */
-.header{position:relative;z-index:3;padding:18px 20px;display:flex;gap:12px;align-items:center}
-.logoBox{width:72px;height:72px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#09f7b8,#00b894);box-shadow:0 12px 30px #00e68622}
-.brandTitle{line-height:1}
-.h1{margin:0;font-size:20px}
-.tag{margin:0;color:var(--muted);font-size:13px}
-
-/* app shell */
-#app{position:fixed;inset:0;display:flex;flex-direction:column;z-index:2}
-.topbar{display:flex;align-items:center;gap:12px;padding:10px 18px;background:linear-gradient(90deg, rgba(0,0,0,0.18), rgba(0,0,0,0.08));border-bottom:1px solid rgba(255,255,255,0.03)}
-.nav{display:flex;gap:8px;align-items:center}
-.nav button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px 12px;border-radius:999px;cursor:pointer}
-.nav button.active{border-color:rgba(0,230,134,0.6);color:#eafff5;background:linear-gradient(90deg, rgba(0,230,134,0.06), rgba(0,230,134,0.02))}
-.userInfo{margin-left:auto;color:var(--muted);font-size:13px}
-
-/* layout */
-.layout{display:grid;grid-template-columns:1fr 420px;gap:18px;padding:18px;flex:1;overflow:auto}
-@media (max-width:980px){.layout{grid-template-columns:1fr}}
-.panel{background:var(--card);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 30px rgba(0,0,0,0.45)}
-.kpis{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.kpi{flex:1;min-width:140px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;text-align:left}
-.kpi .num{font-size:20px;font-weight:700;color:var(--accent)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:800px){.grid2{grid-template-columns:1fr}}
-
-/* inputs/buttons */
-.searchRow{display:flex;gap:8px;align-items:center}
-input[type=text], textarea, select{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);color:inherit;padding:10px;border-radius:8px;outline:none;width:100%}
-button.btn{background:linear-gradient(180deg,var(--accent),#00b36a);border:none;padding:10px 14px;border-radius:10px;color:#012;cursor:pointer;font-weight:700}
-button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px 10px;border-radius:8px}
-
-/* table */
-table{width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden}
-th,td{padding:8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px}
-tr:hover td{background:rgba(0,0,0,0.06)}
-.mapFrame{width:100%;height:300px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
-.foot{padding:12px;text-align:center;color:var(--muted);font-size:13px}
-
-/* toast */
-#toast{position:fixed;right:18px;bottom:18px;background:#012b23;border:1px solid rgba(0,230,134,0.08);padding:10px 14px;border-radius:10px;color:#dff;opacity:0;transform:translateY(8px);transition:all .25s}
-
-/* login modal */
-#loginModal{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.65));z-index:6}
-.loginCard{width:360px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 18px 60px rgba(0,0,0,0.7)}
-.loginCard h3{margin:0 0 8px;color:var(--accent)}
-.tiny{font-size:13px;color:var(--muted)}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Crime Tracker</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      text-align: center;
+      background: linear-gradient(to bottom, #00111a, #003322, #004d26);
+      background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+      background-size: cover;
+    }
+    header {
+      padding: 20px;
+    }
+    header img {
+      height: 100px;
+    }
+    h1 {
+      margin: 10px 0;
+      font-size: 2rem;
+      text-shadow: 2px 2px 5px #000;
+    }
+    .login-box {
+      background: rgba(0, 0, 0, 0.6);
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 300px;
+      box-shadow: 0 0 10px #000;
+    }
+    input, select, button {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 6px;
+    }
+    button {
+      background: #28a745;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #218838;
+    }
+    .features {
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+    .feature-card {
+      background: rgba(0,0,0,0.5);
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px #000;
+      transition: transform 0.2s;
+    }
+    .feature-card:hover {
+      transform: scale(1.05);
+      background: rgba(0,0,0,0.7);
+    }
+  </style>
 </head>
 <body>
-  <div class="stars" aria-hidden="true"></div>
+  <header>
+    <img src="https://i.ibb.co/yp1yKz3/smart-crime-logo.png" alt="Smart Crime Tracker Logo" />
+    <h1>🌌 Smart Crime Tracker</h1>
+    <p>Presentation Demo – Secure, Modern & Professional</p>
+  </header>
 
-  <!-- Login modal -->
-  <div id="loginModal">
-    <div class="loginCard" role="dialog" aria-labelledby="loginTitle">
-      <div style="display:flex;gap:12px;align-items:center">
-        <div class="logoBox" aria-hidden="true">
-          <!-- inline SVG logo -->
-          <svg viewBox="0 0 64 64" width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#00f0b0"/><stop offset="1" stop-color="#17d0ff"/></linearGradient></defs>
-            <path d="M32 6c9 6 18 6 18 6v16c0 14-9 21-18 24-9-3-18-10-18-24V12s9 0 18-6Z" stroke="url(#g1)" stroke-width="2.6" fill="rgba(0,255,150,0.04)"/>
-            <circle cx="24" cy="26" r="2.4" stroke="#00ffb0"/>
-            <circle cx="32" cy="33" r="2.4" stroke="#00ffb0"/>
-            <circle cx="40" cy="25" r="2.4" stroke="#00ffb0"/>
-            <path d="M48 18a5 5 0 0 1-6-6 6 6 0 1 0 6 6Z" fill="#00ffb0" opacity=".12"/>
-          </svg>
-        </div>
-        <div>
-          <h3 id="loginTitle">SMART CRIME TRACKER — DEMO</h3>
-          <div class="tiny">Demo credentials: <b>admin / Allah@1</b> &nbsp; <span style="opacity:.9">user / 1234</span></div>
-        </div>
-      </div>
-
-      <hr style="border:none;height:8px;background:linear-gradient(90deg,transparent,rgba(0,255,150,0.06),transparent);margin:12px 0 14px"/>
-
-      <label class="tiny">User</label>
-      <input id="Luser" type="text" placeholder="admin" style="margin-bottom:8px"/>
-
-      <label class="tiny">Password</label>
-      <input id="Lpass" type="password" placeholder="Allah@1" style="margin-bottom:12px"/>
-
-      <div style="display:flex;gap:8px">
-        <button class="btn" onclick="doLogin()">Enter</button>
-        <button class="ghost" onclick="fillQuick()">Fill demo</button>
-      </div>
-      <p id="Lmsg" class="tiny" style="margin-top:10px;color:#ffb3b3"></p>
-    </div>
+  <!-- Login Box -->
+  <div class="login-box">
+    <h2>Login</h2>
+    <select>
+      <option>Admin</option>
+      <option>User</option>
+    </select>
+    <input type="text" placeholder="Username" />
+    <input type="password" placeholder="Password" />
+    <button onclick="alert('Demo Login Successful!')">Login</button>
   </div>
 
-  <!-- App shell -->
-  <div id="app" aria-hidden="true">
-    <div class="header">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div class="logoBox" aria-hidden="true" style="width:56px;height:56px"></div>
-        <div class="brandTitle">
-          <div class="h1">SMART CRIME TRACKER</div>
-          <div class="tag">Presentation • Demo UI • No live telecom hooks</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="topbar">
-      <nav class="nav" role="navigation" aria-label="Main">
-        <button class="navbtn active" data-tab="dashboard" onclick="navTo(event)">Dashboard</button>
-        <button class="navbtn" data-tab="search" onclick="navTo(event)">Number Search</button>
-        <button class="navbtn" data-tab="cdr" onclick="navTo(event)">CDR</button>
-        <button class="navbtn" data-tab="map" onclick="navTo(event)">Map</button>
-        <button class="navbtn" data-tab="ai" onclick="navTo(event)">AI</button>
-        <button class="navbtn" data-tab="fb" onclick="navTo(event)">Facebook</button>
-        <button class="navbtn" data-tab="admin" onclick="navTo(event)">Admin</button>
-      </nav>
-      <div class="userInfo" id="userInfo">Not signed in</div>
-    </div>
-
-    <div class="layout">
-      <main>
-        <!-- Dashboard -->
-        <section id="tab-dashboard" class="panel">
-          <div class="kpis">
-            <div class="kpi"><div class="tiny">Active Cases</div><div class="num" id="kActive">0</div></div>
-            <div class="kpi"><div class="tiny">High Risk</div><div class="num" id="kHigh">0</div></div>
-            <div class="kpi"><div class="tiny">Alerts Today</div><div class="num" id="kAlerts">0</div></div>
-          </div>
-
-          <div class="grid2">
-            <div class="panel">
-              <h4 style="margin:0 0 8px;color:var(--accent)">Quick Actions</h4>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button class="btn" onclick="openTab('search')">🔎 Number Search</button>
-                <button class="btn" onclick="openTab('map')">🛰 Map</button>
-                <button class="btn" onclick="openTab('cdr')">📋 Load CDR</button>
-                <button class="btn" onclick="openTab('ai')">🤖 Run AI</button>
-              </div>
-            </div>
-
-            <div class="panel">
-              <h4 style="margin:0 0 8px;color:var(--accent)">Recent Alerts (Demo)</h4>
-              <table aria-live="polite">
-                <thead><tr><th>Time</th><th>Event</th><th>Risk</th></tr></thead>
-                <tbody id="alertsTbl"><tr><td>09:12</td><td>Unusual port activity</td><td style="color:#ffd700">Medium</td></tr></tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- Number Search -->
-        <section id="tab-search" class="panel" style="display:none">
-          <h4 style="color:var(--accent);margin-top:0">Number Search</h4>
-          <div class="searchRow" style="margin-bottom:10px">
-            <input id="searchNum" placeholder="e.g. 01700000000"/>
-            <button class="btn" onclick="doNumberSearch()">Search</button>
-            <button class="ghost" onclick="clearSearch()">Clear</button>
-          </div>
-          <div id="searchResult"></div>
-        </section>
-
-        <!-- CDR -->
-        <section id="tab-cdr" class="panel" style="display:none">
-          <h4 style="color:var(--accent);margin-top:0">Call Detail Records (Demo)</h4>
-          <div style="display:flex;gap:8px;margin-bottom:8px">
-            <button class="btn" onclick="loadCDR()">Load Sample CDR</button>
-            <button class="ghost" onclick="exportCDR()">Export CSV</button>
-          </div>
-          <div style="overflow:auto">
-            <table id="cdrTbl"><thead><tr><th>Time</th><th>Caller</th><th>Callee</th><th>Dur(s)</th><th>Cell</th></tr></thead><tbody></tbody></table>
-          </div>
-        </section>
-
-        <!-- AI -->
-        <section id="tab-ai" class="panel" style="display:none">
-          <h4 style="color:var(--accent);margin-top:0">AI Analyzer (Demo)</h4>
-          <p class="tiny">Paste event text — demo highlights suspicious keywords.</p>
-          <textarea id="aiInput" placeholder="Example: cash drop at port, meet handler at gate 3"></textarea>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn" onclick="runAIDemo()">Analyze</button>
-            <button class="ghost" onclick="clearAIDemo()">Clear</button>
-          </div>
-          <div id="aiOut" style="margin-top:12px"></div>
-        </section>
-
-        <!-- Facebook -->
-        <section id="tab-fb" class="panel" style="display:none">
-          <h4 style="color:var(--accent);margin-top:0">Facebook / Social (Demo)</h4>
-          <p class="tiny">Paste a public profile link — demo only.</p>
-          <div style="display:flex;gap:8px">
-            <input id="fbUrl" placeholder="https://facebook.com/username"/>
-            <button class="btn" onclick="fbAnalyze()">Analyze</button>
-            <button class="ghost" onclick="fbClear()">Clear</button>
-          </div>
-          <div id="fbOut" style="margin-top:12px"></div>
-        </section>
-      </main>
-
-      <aside>
-        <div class="panel" style="margin-bottom:12px">
-          <h4 style="margin:0 0 8px;color:var(--accent)">Map (Embed Demo)</h4>
-          <div class="mapFrame">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14604.69688454172!2d90.40744!3d23.7104!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1" style="width:100%;height:100%;border:0" loading="lazy"></iframe>
-          </div>
-        </div>
-
-        <div class="panel" style="margin-bottom:12px">
-          <h4 style="margin:0 0 8px;color:var(--accent)">Suspicious Handlers</h4>
-          <table><thead><tr><th>Handler</th><th>Score</th></tr></thead><tbody id="handlerTbl"><tr><td>HND-0173****210</td><td>78</td></tr><tr><td>HND-0182****905</td><td>64</td></tr></tbody></table>
-          <div style="margin-top:8px"><button class="btn" onclick="analyzeHandlers()">Re-analyze</button></div>
-        </div>
-
-        <div class="panel">
-          <h4 style="margin:0 0 8px;color:var(--accent)">Admin Approval</h4>
-          <table id="adminTbl"><thead><tr><th>Request</th><th>User</th><th>Status</th><th>Action</th></tr></thead>
-            <tbody>
-              <tr><td>CDR Access: 01700000000</td><td>ops_17</td><td id="req0">Pending</td><td><button class="navbtn" onclick="approve(0)">Approve</button> <button class="navbtn" onclick="reject(0)">Reject</button></td></tr>
-              <tr><td>Geo Sweep: Tati Bazar</td><td>op_unit</td><td id="req1">Pending</td><td><button class="navbtn" onclick="approve(1)">Approve</button> <button class="navbtn" onclick="reject(1)">Reject</button></td></tr>
-            </tbody></table>
-        </div>
-      </aside>
-    </div>
-
-    <div class="foot">Presentation Demo • Use only with lawful authorization • © Smart Crime Tracker</div>
+  <!-- Features -->
+  <div class="features">
+    <div class="feature-card">📞 Number Search (Demo)</div>
+    <div class="feature-card">🌍 Location Search (Google Maps API Demo)</div>
+    <div class="feature-card">⚠️ Suspicious Handler Filter (Demo)</div>
+    <div class="feature-card">📑 CDR – Call History Demo</div>
+    <div class="feature-card">🛡️ Admin Approval Panel</div>
+    <div class="feature-card">🤖 AI Connectivity (Demo)</div>
+    <div class="feature-card">📘 Facebook Profile Integration (Demo)</div>
   </div>
-
-  <div id="toast" role="status" aria-live="polite"></div>
-
-<script>
-  const $ = s=>document.querySelector(s);
-  const $$ = s=>document.querySelectorAll(s);
-  const toast = t=>{ const e = $('#toast'); e.textContent = t; e.style.opacity=1; setTimeout(()=>e.style.opacity=0,2000); }
-
-  // login
-  function doLogin(){
-    const u = $('#Luser').value.trim(), p = $('#Lpass').value;
-    if(!u||!p){ $('#Lmsg').textContent='Enter credentials'; return; }
-    if((u==='admin' && p==='Allah@1') || (u==='user' && p==='1234')){
-      $('#loginModal').style.display='none';
-      $('#app').removeAttribute('aria-hidden');
-      $('#userInfo').textContent = `Signed in: ${u}`;
-      toast('Logged in as '+u);
-      bootstrap();
-    } else { $('#Lmsg').textContent='Invalid demo credentials'; }
-  }
-  function fillQuick(){ $('#Luser').value='admin'; $('#Lpass').value='Allah@1'; $('#Lmsg').textContent=''; }
-
-  // navigation
-  function navTo(e){
-    $$('.nav button').forEach(b=>b.classList.remove('active'));
-    e.currentTarget.classList.add('active');
-    const tab = e.currentTarget.dataset.tab;
-    // hide all main sections
-    $$('#app main section').forEach(s=>s.style.display='none');
-    // show corresponding section
-    const id = '#tab-'+tab;
-    const el = document.querySelector(id);
-    if(el) el.style.display='block';
-    else { /* fallback */ }
-  }
-  function openTab(name){
-    const btn = Array.from($$('.nav button')).find(b=>b.dataset.tab===name);
-    if(btn) btn.click();
-  }
-
-  // bootstrap values
-  function bootstrap(){
-    animate('#kActive',5,30); animate('#kHigh',1,40); animate('#kAlerts',2,40);
-  }
-  function animate(sel,target,ms){
-    let n=0; const el=$(sel); const iv=setInterval(()=>{ n++; el.textContent=n; if(n>=target) clearInterval(iv); }, ms);
-  }
-
-  // Number search demo
-  function doNumberSearch(){
-    const q = $('#searchNum').value.trim();
-    const out = $('#searchResult'); out.innerHTML='';
-    if(!q){ out.textContent='Provide number'; return; }
-    let resp;
-    if(q.includes('0170')||q.includes('0171')) resp = `<b>${q}</b> — Owner: Unknown (Flagged) • LastSeen: Motijheel • <span style="color:#ffd700">Risk: High</span>`;
-    else if(q.includes('018')) resp = `<b>${q}</b> — Owner: Local Trader • Location: Bashundhara • <span style="color:#9fdad0">Risk: Low</span>`;
-    else resp = `<b>${q}</b> — No public records (demo)`;
-    out.innerHTML = `<div style="padding:10px;background:rgba(0,0,0,0.12);border-radius:8px">${resp}</div>`;
-    toast('Number search (demo) complete');
-  }
-  function clearSearch(){ $('#searchNum').value=''; $('#searchResult').innerHTML=''; }
-
-  // CDR demo
-  const SAMPLE = [
-    {t:'2025-09-01 09:12', caller:'01700000001', callee:'01800000002', dur:120, cell:'Dhaka'},
-    {t:'2025-09-01 11:05', caller:'01800000002', callee:'01700000003', dur:45, cell:'Chattogram'},
-    {t:'2025-09-02 23:50', caller:'01700000001', callee:'01900000004', dur:12, cell:'Rangpur'},
-    {t:'2025-09-03 10:10', caller:'01700000005', callee:'01700000001', dur:35, cell:'Sylhet'}
-  ];
-  function loadCDR(){ renderCDR(SAMPLE); toast('Sample CDR loaded'); }
-  function renderCDR(rows){ const t=$('#cdrTbl tbody'); t.innerHTML=''; (rows||[]).forEach(r=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${r.t}</td><td>${r.caller}</td><td>${r.callee}</td><td>${r.dur}</td><td>${r.cell}</td>`; t.appendChild(tr); }); }
-  function exportCDR(){ const rows=SAMPLE; if(!rows.length){ toast('No CDR'); return;} const csv=['Time,Caller,Callee,Duration,Cell', ...rows.map(r=>`${r.t},${r.caller},${r.callee},${r.dur},${r.cell}`)].join('\n'); const b=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='cdr_demo.csv'; a.click(); toast('CDR exported'); }
-
-  // Handlers analyze
-  function analyzeHandlers(){ const tbl=$('#handlerTbl'); tbl.innerHTML=''; ['HND-0173****210','HND-0182****905','HND-0167****441'].forEach(n=>{ const sc=40+Math.floor(Math.random()*50); const tr=document.createElement('tr'); tr.innerHTML=`<td>${n}</td><td>${sc}</td>`; tbl.appendChild(tr); }); toast('Handlers analyzed (demo)'); }
-
-  // AI demo
-  const BAD = ['cash','drop','handler','gold','port','gate','transfer','hawala','parcel','meet'];
-  function runAIDemo(){ const txt=$('#aiInput').value.trim(); if(!txt){ toast('Write text to analyze'); return;} const tokens=txt.split(/\b/); const processed=tokens.map(t=> BAD.includes(t.toLowerCase())? `<mark style="background:rgba(255,215,0,0.22);padding:2px;border-radius:3px">${t}</mark>`:t).join(''); const score=Math.min(98, (txt.match(/\d+/g)||[]).join('').length + Math.min(70,Math.floor(txt.length/2))); $('#aiOut').innerHTML = `<div style="background:rgba(0,0,0,0.12);padding:12px;border-radius:8px"><b>Risk Score:</b> ${score}% &nbsp; <span style="color:${score>70?'#ff6b6b':'#ffd166'}">${score>70?'High':'Moderate'}</span><div style="margin-top:8px">${processed}</div></div>`; toast('AI demo complete'); }
-  function clearAIDemo(){ $('#aiInput').value=''; $('#aiOut').innerHTML=''; }
-
-  // FB demo
-  function fbAnalyze(){ const url=$('#fbUrl').value.trim(); if(!url){ toast('Paste a profile link'); return;} const name=(url.match(/facebook\.com\/([^\/?#]+)/i)||[])[1]||'unknown'; const s=40+Math.floor(Math.random()*60); $('#fbOut').innerHTML=`<div style="background:rgba(0,0,0,0.12);padding:10px;border-radius:8px"><b>${name}</b> — Public signals score: <b>${s}%</b></div>`; toast('FB demo scored'); }
-  function fbClear(){ $('#fbUrl').value=''; $('#fbOut').innerHTML=''; }
-
-  // admin actions
-  function approve(i){ $('#req'+i).textContent='Approved'; toast('Approved (demo)'); }
-  function reject(i){ $('#req'+i).textContent='Rejected'; toast('Rejected (demo)'); }
-
-  // utilities
-  function clearSearch(){ $('#searchNum').value=''; $('#searchResult').innerHTML=''; }
-
-  // enter key submits login
-  document.addEventListener('keydown', e=>{ if(e.key==='Enter' && document.getElementById('loginModal') && document.getElementById('loginModal').style.display!=='none'){ doLogin(); }});
-
-  // alias used in HTML
-  function doLogin(){ doLogin = (function inner(){ /* placeholder to avoid reference error */ })(); } // not used; login uses doLogin defined below
-  // actual login function used by button:
-  function doLogin(){ /* kept for compatibility */ }
-  // But proper login handler:
-  window.doLogin = function(){ doLogin = null; /* keep below function */ }; // overwritten below
-
-  // To ensure proper binding, define final login handler:
-  (function(){
-    window.doLogin = function(){ // final
-      const u = $('#Luser').value.trim(), p = $('#Lpass').value;
-      if(!u||!p){ $('#Lmsg').textContent='Enter credentials'; return; }
-      if((u==='admin' && p==='Allah@1') || (u==='user' && p==='1234')){
-        $('#loginModal').style.display='none';
-        $('#app').removeAttribute('aria-hidden');
-        $('#userInfo').textContent = `Signed in: ${u}`;
-        toast('Logged in as '+u);
-        bootstrap();
-      } else { $('#Lmsg').textContent='Invalid demo credentials'; }
-    };
-  })();
-
-  // ensure nav default shows dashboard after login
-  document.addEventListener('DOMContentLoaded', ()=>{/* waiting for login */});
-</script>
 </body>
 </html>
