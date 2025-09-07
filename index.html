@@ -3,32 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Crime Tracker - Admin</title>
+  <title>Smart Crime Tracker - Admin Demo</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #0f172a;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
       color: #f8fafc;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
-    .container {
+    .box {
       width: 100%;
-      max-width: 450px;
+      max-width: 400px;
       background: #1e293b;
+      padding: 25px;
       border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
       text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
     }
     h1 {
-      font-size: 1.5rem;
       margin-bottom: 20px;
     }
-    input[type="password"], input[type="file"] {
+    input, button {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
@@ -36,61 +35,57 @@
       border-radius: 8px;
       font-size: 1rem;
     }
+    input {
+      background: #334155;
+      color: #fff;
+    }
     button {
       background: #2563eb;
-      color: #fff;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 1rem;
+      color: white;
       cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
     }
     button:hover {
       background: #1d4ed8;
     }
-    .hidden {
-      display: none;
-    }
-    .logo-preview {
-      margin: 20px 0;
-    }
-    .logo-preview img {
+    .hidden { display: none; }
+    .logo img {
       max-width: 200px;
+      margin: 15px 0;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
   </style>
 </head>
 <body>
-  <div class="container" id="loginBox">
+  <!-- Login -->
+  <div class="box" id="loginBox">
     <h1>Admin Login</h1>
     <input type="password" id="password" placeholder="Enter Admin Password">
     <button onclick="checkLogin()">Login</button>
-    <p id="errorMsg" style="color:#f87171; display:none;">Invalid password!</p>
+    <p id="errorMsg" style="color:#f87171; display:none;">❌ Wrong password!</p>
   </div>
 
-  <div class="container hidden" id="dashboard">
+  <!-- Dashboard -->
+  <div class="box hidden" id="dashboard">
     <h1>Admin Dashboard</h1>
-    <div class="logo-preview" id="logoPreview"></div>
+    <div class="logo" id="logoPreview"></div>
     <input type="file" id="logoUpload" accept="image/*">
     <button onclick="saveLogo()">Save Logo</button>
-    <p style="margin-top:15px; font-size:0.9rem; color:#9ca3af;">Your logo is saved in browser and auto loaded next time.</p>
+    <button onclick="logout()">Logout</button>
   </div>
 
   <script>
-    const adminPass = "Admin@123"; // এখানেই পাসওয়ার্ড সেট করো
+    const ADMIN_PASS = "Admin@123"; // ডেমো পাসওয়ার্ড
     const loginBox = document.getElementById("loginBox");
     const dashboard = document.getElementById("dashboard");
-    const errorMsg = document.getElementById("errorMsg");
-    const logoUpload = document.getElementById("logoUpload");
     const logoPreview = document.getElementById("logoPreview");
+    const logoUpload = document.getElementById("logoUpload");
+    const errorMsg = document.getElementById("errorMsg");
 
-    // Login function
+    // Login
     function checkLogin() {
       const pass = document.getElementById("password").value;
-      if (pass === adminPass) {
+      if (pass === ADMIN_PASS) {
         loginBox.classList.add("hidden");
         dashboard.classList.remove("hidden");
         loadLogo();
@@ -99,28 +94,35 @@
       }
     }
 
-    // Save Logo
+    // Logout
+    function logout() {
+      dashboard.classList.add("hidden");
+      loginBox.classList.remove("hidden");
+      document.getElementById("password").value = "";
+    }
+
+    // Save logo
     function saveLogo() {
       const file = logoUpload.files[0];
       if (!file) {
-        alert("Please select a logo first!");
+        alert("Please select a logo!");
         return;
       }
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = (e) => {
         localStorage.setItem("adminLogo", e.target.result);
         loadLogo();
       };
       reader.readAsDataURL(file);
     }
 
-    // Load Logo
+    // Load saved logo
     function loadLogo() {
       const savedLogo = localStorage.getItem("adminLogo");
       if (savedLogo) {
         logoPreview.innerHTML = `<img src="${savedLogo}" alt="Admin Logo">`;
       } else {
-        logoPreview.innerHTML = `<p style="color:#9ca3af;">No logo uploaded yet.</p>`;
+        logoPreview.innerHTML = `<p style="color:#9ca3af;">No logo uploaded.</p>`;
       }
     }
   </script>
