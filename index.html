@@ -1,327 +1,232 @@
-<!doctype html>
-<html lang="bn">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Smart Crime Tracker — Presentation Demo</title>
-<style>
-:root{
-  --bg1:#031218; --bg2:#00372e; --accent:#00e486; --muted:#9fdad0;
-  --card:rgba(6,18,16,0.88); --glass:rgba(255,255,255,0.03);
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, Arial;color:#e9fff6;background:linear-gradient(180deg,var(--bg1),var(--bg2));-webkit-font-smoothing:antialiased}
-
-/* Animated stars background (pure CSS) */
-.stars{position:fixed;inset:0;z-index:0;pointer-events:none;background:
-  radial-gradient(1px 1px at 5% 10%, #fff 60%, transparent 61%),
-  radial-gradient(1px 1px at 20% 30%, #fff 60%, transparent 61%),
-  radial-gradient(1px 1px at 35% 60%, #fff 60%, transparent 61%),
-  radial-gradient(1px 1px at 50% 20%, #fff 60%, transparent 61%),
-  radial-gradient(1px 1px at 65% 45%, #fff 60%, transparent 61%),
-  radial-gradient(1px 1px at 80% 70%, #fff 60%, transparent 61%);
-  opacity:.45; animation: drift 90s linear infinite;}
-@keyframes drift{from{transform:translateY(0)}to{transform:translateY(-1400px)}}
-
-/* Header / brand */
-.header{position:relative;z-index:3;padding:18px 24px;display:flex;align-items:center;gap:16px}
-.logoBox{width:76px;height:76px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#009b66);display:grid;place-items:center;box-shadow:0 12px 40px rgba(0,230,134,0.08)}
-.brandTitle h1{margin:0;font-size:20px;letter-spacing:1px}
-.brandTitle p{margin:4px 0 0;color:var(--muted);font-size:13px}
-
-/* App shell */
-#app{position:relative;z-index:2;display:flex;flex-direction:column;min-height:calc(100vh - 110px)}
-.topbar{display:flex;align-items:center;padding:12px 22px;gap:12px;border-top:1px solid rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.02);background:linear-gradient(90deg, rgba(0,0,0,0.12), rgba(0,0,0,0.05))}
-.nav{display:flex;gap:8px}
-.nav button{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);padding:8px 12px;border-radius:999px;cursor:pointer}
-.nav button.active{border-color:rgba(0,230,134,0.45);color:#eafff5;background:linear-gradient(90deg, rgba(0,230,134,0.04), rgba(0,230,134,0.01))}
-.userInfo{margin-left:auto;color:var(--muted);font-size:13px}
-
-/* Layout */
-.layout{display:grid;grid-template-columns:1fr 420px;gap:18px;padding:18px;flex:1;overflow:auto}
-@media (max-width:980px){.layout{grid-template-columns:1fr}}
-.panel{background:var(--card);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 18px 40px rgba(0,0,0,0.45)}
-.kpis{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.kpi{flex:1;min-width:140px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px}
-.kpi .num{font-size:22px;font-weight:700;color:var(--accent)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:800px){.grid2{grid-template-columns:1fr}}
-
-/* Inputs / Buttons */
-.searchRow{display:flex;gap:8px;align-items:center}
-input[type=text], textarea, select{background:var(--glass);border:1px solid rgba(255,255,255,0.03);color:inherit;padding:10px;border-radius:8px;outline:none;width:100%}
-button.btn{background:linear-gradient(180deg,var(--accent),#00b36a);border:none;padding:10px 14px;border-radius:10px;color:#012;cursor:pointer;font-weight:700}
-button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px 10px;border-radius:8px}
-.note{font-size:13px;color:var(--muted);margin-top:8px}
-
-/* Table */
-table{width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden}
-th,td{padding:8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.02);font-size:13px}
-tr:hover td{background:rgba(0,0,0,0.06)}
-.mapFrame{width:100%;height:300px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
-.foot{padding:12px;text-align:center;color:var(--muted);font-size:13px}
-#toast{position:fixed;right:18px;bottom:18px;background:#022;border:1px solid rgba(0,230,134,0.08);padding:10px 14px;border-radius:10px;color:#dff;opacity:0;transform:translateY(8px);transition:all .25s}
-
-/* Login modal */
-#loginModal{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.7));z-index:6}
-.loginCard{width:460px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 18px 60px rgba(0,0,0,0.75)}
-.loginCard h3{margin:0 0 8px;color:var(--accent)}
-.tiny{font-size:13px;color:var(--muted)}
-textarea{min-height:100px;resize:vertical}
-mark{background:rgba(255,215,0,0.2);padding:2px;border-radius:4px}
-.logoSvg{width:54px;height:54px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Crime Tracker (Demo)</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --panel: #161b2a;
+      --accent: #3d8bfd;
+      --text: #eaeaea;
+      --muted: #888;
+    }
+    body {
+      margin:0; font-family: Arial, sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+    header {
+      padding:10px; display:flex; align-items:center;
+      background:#101526; justify-content:space-between;
+    }
+    .logoBox {
+      width:120px;height:60px;display:flex;align-items:center;justify-content:center;
+    }
+    nav a {
+      color: var(--text); margin:0 10px; text-decoration:none; font-size:14px;
+    }
+    .tabs { display:flex; margin:10px; }
+    .tab {
+      padding:8px 12px; cursor:pointer;
+      background:#1c2235; margin-right:5px; border-radius:6px;
+    }
+    .tab.active { background: var(--accent); color:#fff; }
+    .tab-content { display:none; padding:10px; }
+    .tab-content.active { display:block; }
+    .panel {
+      background: var(--panel); padding:12px; border-radius:8px; margin:8px 0;
+    }
+    .btn, .ghost {
+      padding:6px 12px; border:none; border-radius:6px;
+      cursor:pointer; font-size:14px;
+    }
+    .btn { background: var(--accent); color:#fff; }
+    .ghost { background: transparent; border:1px solid var(--muted); color:var(--muted);}
+    input[type="file"], input[type="text"], input[type="password"] {
+      padding:6px; border-radius:6px; border:1px solid #333; background:#0f1320; color:#fff;
+    }
+    .tiny { font-size:12px; color:var(--muted); }
+    .note { font-size:12px; color:#aaa; }
+    #toast {
+      position:fixed; bottom:20px; right:20px; background:#222; color:#fff;
+      padding:8px 14px; border-radius:6px; display:none;
+    }
+  </style>
 </head>
 <body>
-  <div class="stars" aria-hidden="true"></div>
-
-  <!-- LOGIN MODAL -->
-  <div id="loginModal">
-    <div class="loginCard" role="dialog" aria-labelledby="loginTitle">
-      <div style="display:flex;gap:12px;align-items:center">
-        <div class="logoBox" aria-hidden="true">
-          <!-- inline SVG logo -->
-          <svg viewBox="0 0 64 64" class="logoSvg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <defs><linearGradient id="gg1" x1="0" x2="1"><stop offset="0" stop-color="#00f0b0"/><stop offset="1" stop-color="#17d0ff"/></linearGradient></defs>
-            <path d="M32 6c9 6 18 6 18 6v16c0 14-9 21-18 24-9-3-18-10-18-24V12s9 0 18-6Z" stroke="url(#gg1)" stroke-width="2.4" fill="rgba(0,255,150,0.04)"/>
-            <circle cx="24" cy="26" r="2.4" stroke="#00ffb0"/><circle cx="32" cy="33" r="2.4" stroke="#00ffb0"/><circle cx="40" cy="25" r="2.4" stroke="#00ffb0"/>
-            <path d="M48 18a5 5 0 0 1-6-6 6 6 0 1 0 6 6Z" fill="#00ffb0" opacity=".12"/>
-          </svg>
-        </div>
-        <div>
-          <h3 id="loginTitle">SMART CRIME TRACKER — PRESENTATION DEMO</h3>
-          <div class="tiny">Demo credentials: <b>admin / Allah@1</b> • <span style="opacity:.9">user / 1234</span></div>
-        </div>
-      </div>
-
-      <hr style="border:none;height:8px;background:linear-gradient(90deg,transparent,rgba(0,255,150,0.06),transparent);margin:12px 0 14px"/>
-
-      <label class="tiny">User</label>
-      <input id="Luser" type="text" placeholder="admin" style="margin-bottom:8px"/>
-
-      <label class="tiny">Password</label>
-      <input id="Lpass" type="password" placeholder="Allah@1" style="margin-bottom:12px"/>
-
-      <div style="display:flex;gap:8px">
-        <button class="btn" onclick="doLogin()">Enter</button>
-        <button class="ghost" onclick="fillQuick()">Fill demo</button>
-      </div>
-      <p id="Lmsg" class="tiny" style="margin-top:10px;color:#ffb3b3"></p>
+  <header>
+    <div class="logoBox">
+      <!-- default logo -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="60" height="60">
+        <circle cx="50" cy="50" r="48" fill="#3d8bfd"/>
+        <text x="50" y="55" text-anchor="middle" font-size="28" fill="#fff" font-family="Arial">SCT</text>
+      </svg>
     </div>
-  </div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Docs</a>
+      <a href="#">Support</a>
+    </nav>
+  </header>
 
-  <!-- APP -->
-  <div id="app" aria-hidden="true">
-    <div class="header">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div class="logoBox" aria-hidden="true" style="width:56px;height:56px"></div>
-        <div class="brandTitle">
-          <h1>SMART CRIME TRACKER</h1>
-          <p class="sub">Presentation • Demo UI — No live telecom hooks</p>
-        </div>
-      </div>
+  <main>
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" data-tab="home">Home</div>
+      <div class="tab" data-tab="login">Login</div>
+      <div class="tab" data-tab="admin">Admin</div>
     </div>
 
-    <div class="topbar">
-      <nav class="nav" role="navigation" aria-label="Main">
-        <button class="navbtn active" data-tab="dashboard" onclick="navTo(event)">Dashboard</button>
-        <button class="navbtn" data-tab="search" onclick="navTo(event)">Number Search</button>
-        <button class="navbtn" data-tab="cdr" onclick="navTo(event)">CDR</button>
-        <button class="navbtn" data-tab="map" onclick="navTo(event)">Map</button>
-        <button class="navbtn" data-tab="ai" onclick="navTo(event)">AI</button>
-        <button class="navbtn" data-tab="fb" onclick="navTo(event)">Facebook</button>
-        <button class="navbtn" data-tab="admin" onclick="navTo(event)">Admin</button>
-      </nav>
-      <div class="userInfo" id="userInfo">Not signed in</div>
-    </div>
+    <!-- Tab Contents -->
+    <section id="tab-home" class="tab-content active">
+      <div class="panel">
+        <h3>Smart Crime Tracker</h3>
+        <p>Demo interface for tracking system. Features are placeholder only.</p>
+      </div>
+    </section>
 
-    <div class="layout">
-      <main>
-        <!-- DASHBOARD -->
-        <section id="tab-dashboard" class="panel">
-          <div class="kpis">
-            <div class="kpi"><div class="tiny">Active Cases</div><div class="num" id="kActive">0</div></div>
-            <div class="kpi"><div class="tiny">High Risk</div><div class="num" id="kHigh">0</div></div>
-            <div class="kpi"><div class="tiny">Alerts Today</div><div class="num" id="kAlerts">0</div></div>
+    <section id="tab-login" class="tab-content">
+      <div class="panel">
+        <h3>Login</h3>
+        <input id="username" type="text" placeholder="Username"/><br/><br/>
+        <input id="password" type="password" placeholder="Password"/><br/><br/>
+        <button class="btn" id="loginBtn">Login</button>
+        <div id="loginStatus" class="tiny" style="margin-top:6px"></div>
+      </div>
+    </section>
+
+    <section id="tab-admin" class="tab-content">
+      <div class="panel">
+        <h3>Admin Panel</h3>
+        <div id="userInfo" class="tiny"></div>
+      </div>
+
+      <!-- Logo Management -->
+      <div class="panel" style="margin-top:12px">
+        <h4 style="margin:0 0 8px;color:var(--accent)">Logo — Admin (Upload / Save)</h4>
+        <div style="display:flex;gap:8px;flex-direction:column">
+          <label class="tiny">Upload logo (SVG or PNG/JPG)</label>
+          <input id="logoFile" type="file" accept="image/*,image/svg+xml">
+          
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+            <button class="btn" id="saveLogoBtn">Save Logo</button>
+            <button class="ghost" id="downloadLogoBtn">Download Logo</button>
+            <button class="ghost" id="resetLogoBtn">Reset Default</button>
           </div>
-
-          <div class="grid2">
-            <div class="panel">
-              <h4 style="margin:0 0 8px;color:var(--accent)">Quick Actions</h4>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button class="btn" onclick="openTab('search')">🔎 Number Search</button>
-                <button class="btn" onclick="openTab('map')">🛰 Map</button>
-                <button class="btn" onclick="openTab('cdr')">📋 Load CDR</button>
-                <button class="btn" onclick="openTab('ai')">🤖 Run AI</button>
-              </div>
+  
+          <div style="margin-top:10px">
+            <div class="tiny">Preview:</div>
+            <div id="logoPreview" style="width:120px;height:80px;border-radius:8px;background:rgba(255,255,255,0.02);display:grid;place-items:center;padding:6px;margin-top:6px">
+              <!-- preview will be injected here -->
             </div>
-
-            <div class="panel">
-              <h4 style="margin:0 0 8px;color:var(--accent)">Recent Alerts (Demo)</h4>
-              <table aria-live="polite">
-                <thead><tr><th>Time</th><th>Event</th><th>Risk</th></tr></thead>
-                <tbody id="alertsTbl"><tr><td>09:12</td><td>Unusual port activity</td><td style="color:#ffd700">Medium</td></tr></tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- NUMBER SEARCH -->
-        <section id="tab-search" class="panel" style="display:none">
-          <h4 style="color:var(--accent);margin-top:0">Number Search</h4>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
-            <input id="searchNum" placeholder="e.g. 01700000000"/>
-            <button class="btn" onclick="doNumberSearch()">Search</button>
-            <button class="ghost" onclick="clearSearch()">Clear</button>
-          </div>
-          <div id="searchResult"></div>
-        </section>
-
-        <!-- CDR -->
-        <section id="tab-cdr" class="panel" style="display:none">
-          <h4 style="color:var(--accent);margin-top:0">Call Detail Records (Demo)</h4>
-          <div style="display:flex;gap:8px;margin-bottom:8px">
-            <button class="btn" onclick="loadCDR()">Load Sample CDR</button>
-            <button class="ghost" onclick="exportCDR()">Export CSV</button>
-          </div>
-          <div style="overflow:auto">
-            <table id="cdrTbl"><thead><tr><th>Time</th><th>Caller</th><th>Callee</th><th>Dur(s)</th><th>Cell</th></tr></thead><tbody></tbody></table>
-          </div>
-        </section>
-
-        <!-- AI -->
-        <section id="tab-ai" class="panel" style="display:none">
-          <h4 style="color:var(--accent);margin-top:0">AI Analyzer (Demo)</h4>
-          <p class="tiny">Paste event text — demo highlights suspicious keywords and produces a risk score.</p>
-          <textarea id="aiInput" placeholder="Example: cash drop at port, meet handler at gate 3"></textarea>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn" onclick="runAIDemo()">Analyze</button>
-            <button class="ghost" onclick="clearAIDemo()">Clear</button>
-          </div>
-          <div id="aiOut" style="margin-top:12px"></div>
-        </section>
-
-        <!-- FACEBOOK -->
-        <section id="tab-fb" class="panel" style="display:none">
-          <h4 style="color:var(--accent);margin-top:0">Facebook / Social (Demo)</h4>
-          <p class="tiny">Paste a public profile link — demo only (no Graph API calls).</p>
-          <div style="display:flex;gap:8px">
-            <input id="fbUrl" placeholder="https://facebook.com/username"/>
-            <button class="btn" onclick="fbAnalyze()">Analyze</button>
-            <button class="ghost" onclick="fbClear()">Clear</button>
-          </div>
-          <div id="fbOut" style="margin-top:12px"></div>
-        </section>
-      </main>
-
-      <aside>
-        <div class="panel" style="margin-bottom:12px">
-          <h4 style="margin:0 0 8px;color:var(--accent)">Map (Embed Demo)</h4>
-          <div class="mapFrame">
-            <!-- public embed (presentation) -->
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14604.69688454172!2d90.40744!3d23.7104!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1"
-              style="width:100%;height:100%;border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div class="note" style="margin-top:8px">Logo is saved only in this browser (localStorage). For all users, upload to server.</div>
           </div>
         </div>
+      </div>
+    </section>
+  </main>
 
-        <div class="panel" style="margin-bottom:12px">
-          <h4 style="margin:0 0 8px;color:var(--accent)">Suspicious Handlers</h4>
-          <table><thead><tr><th>Handler</th><th>Score</th></tr></thead><tbody id="handlerTbl"><tr><td>HND-0173****210</td><td>78</td></tr><tr><td>HND-0182****905</td><td>64</td></tr></tbody></table>
-          <div style="margin-top:8px"><button class="btn" onclick="analyzeHandlers()">Re-analyze</button></div>
-        </div>
+  <div id="toast"></div>
 
-        <div class="panel">
-          <h4 style="margin:0 0 8px;color:var(--accent)">Admin Approval</h4>
-          <table id="adminTbl"><thead><tr><th>Request</th><th>User</th><th>Status</th><th>Action</th></tr></thead>
-            <tbody>
-              <tr><td>CDR Access: 01700000000</td><td>ops_17</td><td id="req0">Pending</td><td><button class="navbtn" onclick="approve(0)">Approve</button> <button class="navbtn" onclick="reject(0)">Reject</button></td></tr>
-              <tr><td>Geo Sweep: Tati Bazar</td><td>op_unit</td><td id="req1">Pending</td><td><button class="navbtn" onclick="approve(1)">Approve</button> <button class="navbtn" onclick="reject(1)">Reject</button></td></tr>
-            </tbody></table>
-        </div>
-      </aside>
-    </div>
+  <script>
+    // ===== Tabs =====
+    document.querySelectorAll('.tab').forEach(tab=>{
+      tab.onclick = ()=>{
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+      };
+    });
 
-    <div class="foot">Presentation Demo • Use only with lawful authorization • © Smart Crime Tracker</div>
-  </div>
+    // ===== Toast =====
+    function toast(msg){
+      const t=document.getElementById('toast');
+      t.textContent=msg; t.style.display='block';
+      setTimeout(()=>t.style.display='none',2000);
+    }
 
-  <div id="toast" role="status" aria-live="polite"></div>
+    // ===== Demo Login =====
+    let currentUser=null;
+    document.getElementById('loginBtn').onclick=()=>{
+      const u=document.getElementById('username').value;
+      const p=document.getElementById('password').value;
+      if(u==='admin' && p==='Allah@1'){
+        currentUser='admin';
+        document.getElementById('loginStatus').textContent='Logged in as admin';
+        document.getElementById('userInfo').textContent='Signed in: admin';
+        toast('Welcome admin');
+      }else{
+        currentUser=null;
+        document.getElementById('loginStatus').textContent='Login failed';
+        toast('Invalid login');
+      }
+    };
 
-<script>
-/* small helpers */
-const $ = s=>document.querySelector(s), $$ = s=>document.querySelectorAll(s);
-const toast = t=>{ const e = $('#toast'); e.textContent = t; e.style.opacity=1; setTimeout(()=>e.style.opacity=0,2100); }
-
-/* LOGIN */
-function doLogin(){
-  const u = $('#Luser').value.trim(), p = $('#Lpass').value;
-  if(!u||!p){ $('#Lmsg').textContent='Enter credentials'; return; }
-  if((u==='admin' && p==='Allah@1') || (u==='user' && p==='1234')){
-    $('#loginModal').style.display='none';
-    $('#app').removeAttribute('aria-hidden');
-    $('#userInfo').textContent = `Signed in: ${u}`;
-    toast('Logged in as '+u);
-    bootstrap();
-  } else { $('#Lmsg').textContent='Invalid demo credentials'; }
-}
-function fillQuick(){ $('#Luser').value='admin'; $('#Lpass').value='Allah@1'; $('#Lmsg').textContent=''; }
-
-/* NAV */
-function navTo(e){
-  $$('.nav button').forEach(b=>b.classList.remove('active'));
-  e.currentTarget.classList.add('active');
-  const tab = e.currentTarget.dataset.tab;
-  $$('#app main section').forEach(s=>s.style.display='none');
-  const el = document.querySelector('#tab-'+tab);
-  if(el) el.style.display='block';
-}
-function openTab(name){ const btn = Array.from($$('.nav button')).find(b=>b.dataset.tab===name); if(btn) btn.click(); }
-
-/* BOOTSTRAP KPI */
-function bootstrap(){ animate('#kActive',5,30); animate('#kHigh',1,40); animate('#kAlerts',2,40); analyzeHandlers(); }
-function animate(sel,target,ms){ let n=0; const el=$(sel); const iv=setInterval(()=>{ n++; el.textContent=n; if(n>=target) clearInterval(iv); }, ms); }
-
-/* NUMBER SEARCH (demo) */
-function doNumberSearch(){
-  const q = $('#searchNum').value.trim(); const out = $('#searchResult'); out.innerHTML='';
-  if(!q){ out.textContent='Provide number'; return; }
-  let resp;
-  if(q.includes('0170')||q.includes('0171')) resp = `<b>${q}</b> — Owner: Unknown (Flagged) • LastSeen: Motijheel • <span style="color:#ffd700">Risk: High</span>`;
-  else if(q.includes('018')) resp = `<b>${q}</b> — Owner: Local Trader • Location: Bashundhara • <span style="color:#9fdad0">Risk: Low</span>`;
-  else resp = `<b>${q}</b> — No public records (demo)`;
-  out.innerHTML = `<div style="padding:10px;background:rgba(0,0,0,0.12);border-radius:8px">${resp}</div>`;
-  toast('Number search (demo) complete');
-}
-function clearSearch(){ $('#searchNum').value=''; $('#searchResult').innerHTML=''; }
-
-/* CDR demo */
-const SAMPLE = [
-  {t:'2025-09-01 09:12', caller:'01700000001', callee:'01800000002', dur:120, cell:'Dhaka'},
-  {t:'2025-09-01 11:05', caller:'01800000002', callee:'01700000003', dur:45, cell:'Chattogram'},
-  {t:'2025-09-02 23:50', caller:'01700000001', callee:'01900000004', dur:12, cell:'Rangpur'},
-  {t:'2025-09-03 10:10', caller:'01700000005', callee:'01700000001', dur:35, cell:'Sylhet'}
-];
-function loadCDR(){ renderCDR(SAMPLE); toast('Sample CDR loaded'); }
-function renderCDR(rows){ const t=$('#cdrTbl tbody'); t.innerHTML=''; (rows||[]).forEach(r=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${r.t}</td><td>${r.caller}</td><td>${r.callee}</td><td>${r.dur}</td><td>${r.cell}</td>`; t.appendChild(tr); }); }
-function exportCDR(){ const rows=SAMPLE; if(!rows.length){ toast('No CDR'); return;} const csv=['Time,Caller,Callee,Duration,Cell', ...rows.map(r=>`${r.t},${r.caller},${r.callee},${r.dur},${r.cell}`)].join('\n'); const b=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='cdr_demo.csv'; a.click(); toast('CDR exported'); }
-
-/* HANDLERS analyze */
-function analyzeHandlers(){ const tbl=$('#handlerTbl'); tbl.innerHTML=''; ['HND-0173****210','HND-0182****905','HND-0167****441'].forEach(n=>{ const sc=40+Math.floor(Math.random()*50); const tr=document.createElement('tr'); tr.innerHTML=`<td>${n}</td><td>${sc}</td>`; tbl.appendChild(tr); }); toast('Handlers analyzed (demo)'); }
-
-/* AI demo */
-const BAD = ['cash','drop','handler','gold','port','gate','transfer','hawala','parcel','meet'];
-function runAIDemo(){ const txt=$('#aiInput').value.trim(); if(!txt){ toast('Write text to analyze'); return;} const tokens=txt.split(/\b/); const processed=tokens.map(t=> BAD.includes(t.toLowerCase())? `<mark>${t}</mark>`:t).join(''); const score=Math.min(98, (txt.match(/\d+/g)||[]).join('').length + Math.min(70,Math.floor(txt.length/2))); $('#aiOut').innerHTML = `<div style="background:rgba(0,0,0,0.12);padding:12px;border-radius:8px"><b>Risk Score:</b> ${score}% &nbsp; <span style="color:${score>70?'#ff6b6b':'#ffd166'}">${score>70?'High':'Moderate'}</span><div style="margin-top:8px">${processed}</div></div>`; toast('AI demo complete'); }
-function clearAIDemo(){ $('#aiInput').value=''; $('#aiOut').innerHTML=''; }
-
-/* FB demo (placeholder) */
-function fbAnalyze(){ const url=$('#fbUrl').value.trim(); if(!url){ toast('Paste public profile link'); return;} const name=(url.match(/facebook\.com\/([^\/?#]+)/i)||[])[1]||'unknown'; const s=40+Math.floor(Math.random()*60); $('#fbOut').innerHTML=`<div style="background:rgba(0,0,0,0.12);padding:10px;border-radius:8px"><b>${name}</b> — Public signals score: <b>${s}%</b></div>`; toast('FB demo scored'); }
-function fbClear(){ $('#fbUrl').value=''; $('#fbOut').innerHTML=''; }
-
-/* Admin actions */
-function approve(i){ $('#req'+i).textContent='Approved'; toast('Approved (demo)'); }
-function reject(i){ $('#req'+i).textContent='Rejected'; toast('Rejected (demo)'); }
-
-/* keyboard: Enter submits login */
-document.addEventListener('keydown', e=>{ if(e.key==='Enter' && document.getElementById('loginModal') && document.getElementById('loginModal').style.display!=='none'){ doLogin(); }});
-</script>
+    // ===== Logo Upload / Save / Download / Reset =====
+    const LOGO_KEY = 'sct_logo_v1';
+    function isAdmin(){
+      return currentUser==='admin';
+    }
+    function loadSavedLogo(){
+      const raw=localStorage.getItem(LOGO_KEY);
+      const logoBox=document.querySelector('.logoBox');
+      const preview=document.getElementById('logoPreview');
+      if(!logoBox || !preview) return;
+      if(!raw){
+        preview.innerHTML='<div class="tiny" style="opacity:.75">Default</div>';
+        return;
+      }
+      if(raw.startsWith('<svg')||raw.includes('<svg')){
+        logoBox.innerHTML=raw; preview.innerHTML=raw;
+      } else if(raw.startsWith('data:')){
+        logoBox.innerHTML=`<img src="${raw}" style="max-width:100%;max-height:100%;border-radius:8px">`;
+        preview.innerHTML=`<img src="${raw}" style="max-width:100%;max-height:100%;border-radius:6px">`;
+      }
+    }
+    document.getElementById('logoFile').addEventListener('change',(ev)=>{
+      const f=ev.target.files[0]; if(!f) return;
+      const r=new FileReader();
+      r.onload=(e)=>{
+        const result=e.target.result;
+        const preview=document.getElementById('logoPreview');
+        if(f.type==='image/svg+xml'||(typeof result==='string'&&result.trim().startsWith('<svg'))){
+          preview.innerHTML=result; preview.dataset.pending=result;
+          toast('SVG ready to save');
+        } else {
+          preview.innerHTML=`<img src="${result}" style="max-width:100%;max-height:100%;border-radius:6px">`;
+          preview.dataset.pending=result;
+          toast('Image ready to save');
+        }
+      };
+      if(f.type==='image/svg+xml') r.readAsText(f);
+      else r.readAsDataURL(f);
+    });
+    document.getElementById('saveLogoBtn').onclick=()=>{
+      if(!isAdmin()){ toast('Only admin can save'); return;}
+      const preview=document.getElementById('logoPreview');
+      if(!preview.dataset.pending){ toast('No logo to save'); return;}
+      localStorage.setItem(LOGO_KEY, preview.dataset.pending);
+      loadSavedLogo(); delete preview.dataset.pending;
+      toast('Logo saved');
+    };
+    document.getElementById('downloadLogoBtn').onclick=()=>{
+      const raw=localStorage.getItem(LOGO_KEY); if(!raw){toast('No logo saved');return;}
+      if(raw.startsWith('<svg')){
+        const blob=new Blob([raw],{type:'image/svg+xml'});
+        const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='logo.svg';a.click();
+      } else if(raw.startsWith('data:')){
+        fetch(raw).then(r=>r.blob()).then(blob=>{
+          const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='logo.png';a.click();
+        });
+      }
+    };
+    document.getElementById('resetLogoBtn').onclick=()=>{
+      if(!isAdmin()){ toast('Only admin can reset'); return;}
+      localStorage.removeItem(LOGO_KEY); loadSavedLogo(); toast('Reset done');
+    };
+    document.addEventListener('DOMContentLoaded',loadSavedLogo);
+  </script>
 </body>
 </html>
